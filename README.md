@@ -1,2 +1,2 @@
 # Practical-Messaging-Java
-Practical Messaging Examples for Java
+A tutorial for teaching basic messaging patterns
