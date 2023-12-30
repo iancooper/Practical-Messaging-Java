@@ -45,7 +45,7 @@ public class DataTypeChannelConsumer<T extends IAmAMessage> implements AutoClose
     }
 
     /*
-     * Receive a message from the queue
+     * Receive a message from the queue.
      * The queue should have received all message published because we create it in both the producer and consumer.
      *  We can do this in P2P as we are only expecting one consumer to receive the message.
      */
