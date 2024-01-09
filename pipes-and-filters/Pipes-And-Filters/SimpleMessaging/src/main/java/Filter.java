@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.util.concurrent.*;
 import java.util.function.Function;
 
-public class Filter<TIn extends IAmAMessage, TOut extends IAmAMessage> {
+public class Filter<TIn extends IAmAMessage, TOut extends IAmAMessage> implements Runnable {
     private final IAmAnOperation<TIn, TOut> operation;
     private final Function<String, TIn> messageDeserializer;
     private final Function<TOut, String> messageSerializer;
@@ -19,25 +19,21 @@ public class Filter<TIn extends IAmAMessage, TOut extends IAmAMessage> {
         this.outRoutingKey = outRoutingKey;
     }
 
-    public Future<?> run(ExecutorService executor) {
-        return executor.submit(() -> {
-            try {
-                while (!Thread.currentThread().isInterrupted()) {
-                    try (DataTypeChannelConsumer<TIn> inPipe = new DataTypeChannelConsumer<>(messageDeserializer, inRoutingKey, hostName)) {
-                        TIn inMessage = inPipe.receive();
-                        if (inMessage != null) {
-                            TOut outMessage = operation.execute(inMessage);
-                            try (DataTypeChannelProducer<TOut> outPipe = new DataTypeChannelProducer<>(messageSerializer, outRoutingKey, hostName)) {
-                                outPipe.send(outMessage);
-                            }
-                        } else {
-                            Thread.yield();
-                        }
+    public void run() {
+        try (DataTypeChannelConsumer<TIn> inPipe = new DataTypeChannelConsumer<>(messageDeserializer, inRoutingKey, hostName)) {
+            while (!Thread.interrupted()) {
+                TIn inMessage = inPipe.receive();
+                if (inMessage != null) {
+                    TOut outMessage = operation.execute(inMessage);
+                    try (DataTypeChannelProducer<TOut> outPipe = new DataTypeChannelProducer<>(messageSerializer, outRoutingKey, hostName)) {
+                        outPipe.send(outMessage);
                     }
+                } else {
+                    Thread.yield();
                 }
-            } catch (IOException | TimeoutException e) {
-                e.printStackTrace();
             }
-        });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

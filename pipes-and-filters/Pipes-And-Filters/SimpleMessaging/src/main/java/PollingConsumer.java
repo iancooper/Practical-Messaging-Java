@@ -2,7 +2,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 
-public class PollingConsumer<T extends IAmAMessage> {
+public class PollingConsumer<T extends IAmAMessage> implements Runnable {
     private final IAmAHandler<T> messageHandler;
     private final Function<String, T> messageDeserializer;
     private final String hostName;
@@ -15,19 +15,18 @@ public class PollingConsumer<T extends IAmAMessage> {
         this.routingKey = routingKey;
     }
 
-    public Future<?> run(ExecutorService executor) {
-         return executor.submit(() -> {
+    public void run() {
+        try (DataTypeChannelConsumer<T> channel = new DataTypeChannelConsumer<>(messageDeserializer, routingKey, hostName)) {
             while (!Thread.currentThread().isInterrupted()) {
-                try (DataTypeChannelConsumer<T> channel = new DataTypeChannelConsumer<>(messageDeserializer,routingKey, hostName)) {
-                    T message = channel.receive();
-                    if (message != null) {
-                        messageHandler.handle(message);
-                    }
+                T message = channel.receive();
+                if (message != null) {
+                    messageHandler.handle(message);
+                } else {
                     Thread.yield();
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
-        });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
