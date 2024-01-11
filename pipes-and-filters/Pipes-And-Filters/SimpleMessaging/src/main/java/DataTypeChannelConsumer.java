@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 
 public class DataTypeChannelConsumer<T extends IAmAMessage> implements AutoCloseable {
-    private final Function<String, T> messageDeserializer;
+    private final SerDerOperation<String, T> messageDeserializer;
     private final String queueName;
     private static final String exchangeName = "practical-messaging";
     private static final String invalidExchangeName = "practical-messaging-invalid";
@@ -36,7 +36,7 @@ public class DataTypeChannelConsumer<T extends IAmAMessage> implements AutoClose
      * @param routingKey The topic the queue we are using subscribes to (same name mirrors P2P)
      * @param hostName The name of the host (i.e. localhost)
      */
-    public DataTypeChannelConsumer(Function<String, T> messageDeserializer, String routingKey, String hostName) throws IOException, TimeoutException {
+    public DataTypeChannelConsumer(SerDerOperation<String, T> messageDeserializer, String routingKey, String hostName) throws IOException, TimeoutException {
         this.messageDeserializer = messageDeserializer;
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(hostName);
@@ -75,7 +75,7 @@ public class DataTypeChannelConsumer<T extends IAmAMessage> implements AutoClose
                 channel.basicAck(result.getEnvelope().getDeliveryTag(), false);
                 return message;
             }
-            catch (RuntimeException e){
+            catch (SerDerException e){
                 ///put format errors onto the invalid message queue
                 channel.basicReject(result.getEnvelope().getDeliveryTag(), false);
             }

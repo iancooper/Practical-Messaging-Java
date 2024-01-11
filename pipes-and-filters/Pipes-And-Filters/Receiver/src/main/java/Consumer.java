@@ -8,12 +8,11 @@ public class Consumer {
     public static void main(String[] args) throws IOException {
         IAmAHandler<EnrichedGreeting> greetingHandler = new GreetingHandler();
 
-        Function<String, EnrichedGreeting> messageDeserializer = messageBody -> {
+        SerDerOperation<String, EnrichedGreeting> messageDeserializer = messageBody -> {
             try {
                 return new ObjectMapper().readValue(messageBody, EnrichedGreeting.class);
             } catch (Exception e) {
-                e.printStackTrace();
-                return null;
+                throw new SerDerException(e);
             }
         };
 

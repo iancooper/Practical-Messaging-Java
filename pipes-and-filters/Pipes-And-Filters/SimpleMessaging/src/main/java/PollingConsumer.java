@@ -4,11 +4,11 @@ import java.util.function.Function;
 
 public class PollingConsumer<T extends IAmAMessage> implements Runnable {
     private final IAmAHandler<T> messageHandler;
-    private final Function<String, T> messageDeserializer;
+    private final SerDerOperation<String, T> messageDeserializer;
     private final String hostName;
     private final String routingKey;
 
-    public PollingConsumer(IAmAHandler<T> messageHandler, Function<String, T> messageDeserializer, String routingKey, String hostName) {
+    public PollingConsumer(IAmAHandler<T> messageHandler, SerDerOperation<String, T> messageDeserializer, String routingKey, String hostName) {
         this.messageHandler = messageHandler;
         this.messageDeserializer = messageDeserializer;
         this.hostName = hostName;

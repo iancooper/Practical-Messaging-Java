@@ -8,18 +8,18 @@ public class Enricher {
     public static void main(String[] args) throws IOException {
         IAmAnOperation<Greeting, EnrichedGreeting> greetingEnricher = new GreetingEnricher();
 
-        Function<String, Greeting> greetingDeserializer = messageBody -> {
+        SerDerOperation<String, Greeting> greetingDeserializer = messageBody -> {
             try {
                 return new ObjectMapper().readValue(messageBody, Greeting.class);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new SerDerException(e);
             }
         };
-        Function<EnrichedGreeting, String> enrichedGreetingSerializer = enrichedGreeting -> {
+        SerDerOperation<EnrichedGreeting, String> enrichedGreetingSerializer = enrichedGreeting -> {
             try {
                 return new ObjectMapper().writeValueAsString(enrichedGreeting);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new SerDerException(e);
             }
         };
 

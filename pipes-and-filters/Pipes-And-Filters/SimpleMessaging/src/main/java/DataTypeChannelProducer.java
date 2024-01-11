@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 
 public class DataTypeChannelProducer<T extends IAmAMessage> implements AutoCloseable {
-    private final Function<T, String> messageSerializer;
+    private final SerDerOperation<T, String> messageSerializer;
     private final String routingKey;
     private static final String exchangeName = "practical-messaging";
     private static final String invalidExchangeName = "practical-messaging-invalid";
@@ -31,7 +31,7 @@ public class DataTypeChannelProducer<T extends IAmAMessage> implements AutoClose
      * @param routingKey The topic the queue we are using subscribes to (same name mirrors P2P)
      * @param hostName The name of the host (i.e. localhost)
      */
-    public DataTypeChannelProducer(Function<T, String> messageSerializer, String routingKey, String hostName) throws IOException, TimeoutException {
+    public DataTypeChannelProducer(SerDerOperation<T, String> messageSerializer, String routingKey, String hostName) throws IOException, TimeoutException {
         this.messageSerializer = messageSerializer;
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(hostName);
@@ -65,7 +65,7 @@ public class DataTypeChannelProducer<T extends IAmAMessage> implements AutoClose
      * @param message The message we want to send
      * @throws IOException An error publishing the message to RMQ
      */
-    public void send(T message) throws IOException {
+    public void send(T message) throws IOException, SerDerException {
         byte[] body = messageSerializer.apply(message).getBytes(StandardCharsets.UTF_8);
         channel.basicPublish(exchangeName, routingKey, null, body);
     }
