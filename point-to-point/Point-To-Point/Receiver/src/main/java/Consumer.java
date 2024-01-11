@@ -1,7 +1,8 @@
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Consumer {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         try (PointToPointChannel channel = new PointToPointChannel("hello-p2p", "localhost")) {
             String message = channel.receive();
             if (message != null)
@@ -13,6 +14,6 @@ public class Consumer {
         }
 
         System.out.println("Press [enter] to exit.");
-        new Scanner(System.in).nextLine();
+        System.in.read();
     }
 }
