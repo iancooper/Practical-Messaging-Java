@@ -3,7 +3,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 
 public class Producer {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
 
         try (DataTypeChannelProducer<Greeting> channel = new DataTypeChannelProducer<>(greeting -> {
@@ -23,6 +23,6 @@ public class Producer {
         }
 
         System.out.println("Press [enter] to exit.");
-        new java.util.Scanner(System.in).nextLine();
+        System.in.read();
     }
 }
