@@ -1,4 +1,8 @@
+package consumer;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import greeting.Greeting;
+import simplemessaging.DataTypeChannelConsumer;
 
 import java.io.IOException;
 

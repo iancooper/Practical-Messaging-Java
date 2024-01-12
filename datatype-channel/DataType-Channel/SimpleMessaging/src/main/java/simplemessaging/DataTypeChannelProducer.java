@@ -1,3 +1,5 @@
+package simplemessaging;
+
 import com.rabbitmq.client.*;
 
 import java.io.IOException;

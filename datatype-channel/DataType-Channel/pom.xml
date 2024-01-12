@@ -11,7 +11,7 @@
     <modules>
         <module>SimpleMessaging</module>
         <module>Sender</module>
-        <module>Greeting</module>
+        <module>greeting.Greeting</module>
         <module>Receiver</module>
     </modules>
 
