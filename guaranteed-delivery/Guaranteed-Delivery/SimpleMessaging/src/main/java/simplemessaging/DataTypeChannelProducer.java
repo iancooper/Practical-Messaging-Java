@@ -1,3 +1,5 @@
+package simplemessaging;
+
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
@@ -7,9 +9,9 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 
 
-public class DataTypeChannelConsumer<T extends IAmAMessage> implements AutoCloseable {
-    private final Function<String, T> messageDeserializer;
-    private final String queueName;
+public class DataTypeChannelProducer<T extends IAmAMessage> implements AutoCloseable {
+    private final Function<T, String> messageSerializer;
+    private final String routingKey;
     private static final String exchangeName = "practical-messaging";
     private static final String invalidExchangeName = "practical-messaging-invalid";
     private final Connection connection;
@@ -24,27 +26,24 @@ public class DataTypeChannelConsumer<T extends IAmAMessage> implements AutoClose
      *     4. Create a queue to hold messages
      *     5. Bind the queue to listen to a routing key on that exchange
      * We have split producer and consumer, as they need separate serialization/de-serialization of the message
-     * We support an invalid message queue, for items that we cannot deserialize into the datatype on the channel correctly.
-     * RMQ gets this wrong, and calls this dead-letter when it is in fact invalid message
-     * But the principle works, create an exchange for 'invalid' messages and route failed to send to application
-     * code messages to it
-     * We are disposable so that we can be used within a using statement; connections are unmanaged resources
-     * and we want to remember to close them.
+     * We are disposable so that we can be used within a using statement; connections are unmanaged resources and we
+     * want to remember to close them.
      * We are following an RAI pattern here: Resource Acquisition is Initialization
-     *
-     * @param messageDeserializer A method that deserializes JSON into a type
+     * @param messageSerializer A method that serializes a type into JSON
      * @param routingKey The topic the queue we are using subscribes to (same name mirrors P2P)
      * @param hostName The name of the host (i.e. localhost)
      */
-    public DataTypeChannelConsumer(Function<String, T> messageDeserializer, String routingKey, String hostName) throws IOException, TimeoutException {
-        this.messageDeserializer = messageDeserializer;
+    public DataTypeChannelProducer(Function<T, String> messageSerializer, String routingKey, String hostName) throws IOException, TimeoutException {
+        this.messageSerializer = messageSerializer;
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(hostName);
         factory.setAutomaticRecoveryEnabled(true);
         connection = factory.newConnection();
         channel = connection.createChannel();
 
-        queueName = routingKey;
+        this.routingKey = routingKey;
+        String queueName = routingKey;
+
         var invalidRoutingKey = "invalid" + routingKey;
         var invalidMessageQueueName = invalidRoutingKey;
 
@@ -62,26 +61,21 @@ public class DataTypeChannelConsumer<T extends IAmAMessage> implements AutoClose
         channel.queueBind(invalidMessageQueueName, invalidExchangeName, invalidRoutingKey);
     }
 
-    /*
-     * Receive a message from the queue.
-     * The queue should have received all message published because we create it in both the producer and consumer.
-     *  We can do this in P2P as we are only expecting one consumer to receive the message.
+    /**
+     *  Send a message over the channel
+     *   Uses the shared routing key to ensure the sender and receiver match up
+     * @param message The message we want to send
+     * @throws IOException An error publishing the message to RMQ
      */
-    public T receive() throws IOException {
-        GetResponse result = channel.basicGet(queueName, false);
-        if (result != null) {
-            try {
-                T message = messageDeserializer.apply(new String(result.getBody(), StandardCharsets.UTF_8));
-                channel.basicAck(result.getEnvelope().getDeliveryTag(), false);
-                return message;
-            }
-            catch (RuntimeException e){
-                ///put format errors onto the invalid message queue
-                channel.basicReject(result.getEnvelope().getDeliveryTag(), false);
-            }
-        }
+    public void send(T message) throws IOException {
+        byte[] body = messageSerializer.apply(message).getBytes(StandardCharsets.UTF_8);
 
-        return null;
+        //In order to do guaranteed delivery, we want to use the broker's message store to hold the message,
+        //so that it will be available even if the broker restarts
+        var basicProperties = new AMQP.BasicProperties.Builder();
+        basicProperties.deliveryMode(2);    //persistent
+
+        channel.basicPublish(exchangeName, routingKey, basicProperties.build(), body);
     }
 
     @Override
