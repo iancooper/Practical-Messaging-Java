@@ -1,3 +1,7 @@
+package greeting;
+
+import simplemessaging.IAmAMessage;
+
 public class BadGreeting implements IAmAMessage {
     private int number = 1234;
 

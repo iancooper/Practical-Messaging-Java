@@ -1,3 +1,7 @@
+package greeting;
+
+import simplemessaging.IAmAMessage;
+
 public class Greeting implements IAmAMessage {
     private String salutation = "Hello World";
 
