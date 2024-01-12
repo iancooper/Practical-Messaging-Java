@@ -1,5 +1,8 @@
+package receiver;
+
+import simplemessaging.PointToPointChannel;
+
 import java.io.IOException;
-import java.util.Scanner;
 
 public class Consumer {
     public static void main(String[] args) throws IOException {

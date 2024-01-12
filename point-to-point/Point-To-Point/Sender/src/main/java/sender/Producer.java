@@ -1,5 +1,8 @@
+package sender;
+
+import simplemessaging.PointToPointChannel;
+
 import java.io.IOException;
-import java.util.Scanner;
 
 public class Producer {
     public static void main(String[] args) throws IOException {
