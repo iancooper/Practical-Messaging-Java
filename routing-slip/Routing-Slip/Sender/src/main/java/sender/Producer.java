@@ -1,4 +1,10 @@
+package sender;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import greetings.GlobalStepList;
+import greetings.Greeting;
+import simplemessaging.DataTypeChannelProducer;
+import simplemessaging.Step;
 
 import java.io.IOException;
 import java.util.Scanner;

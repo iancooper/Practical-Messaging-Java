@@ -1,11 +1,12 @@
+package simplemessaging;
+
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.TreeSet;
 
 public class RoutingSlip implements IAmARoutingSlip{
 
     private int currentStep = 1;
     private HashMap<Integer, Step> steps = new HashMap<>();
+
     @Override
     public int getCurrentStep() {
         return currentStep;

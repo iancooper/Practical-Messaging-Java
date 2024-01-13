@@ -1,3 +1,5 @@
+package simplemessaging;
+
 import java.util.HashMap;
 
 public interface IAmARoutingSlip extends IAmAMessage {

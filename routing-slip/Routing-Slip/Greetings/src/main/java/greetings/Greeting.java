@@ -1,3 +1,8 @@
+package greetings;
+
+import simplemessaging.IAmAMessage;
+import simplemessaging.RoutingSlip;
+
 public class Greeting extends RoutingSlip implements IAmAMessage {
     private String salutation = "Hello World";
     private String recipient;
