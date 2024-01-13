@@ -1,3 +1,5 @@
+package simplemessaging;
+
 import java.util.UUID;
 
 public interface IAmAResponse {

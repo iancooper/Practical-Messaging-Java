@@ -1,3 +1,7 @@
+package greetings;
+
+import simplemessaging.IAmAMessage;
+
 import java.util.UUID;
 
 public class Greeting implements IAmAMessage {

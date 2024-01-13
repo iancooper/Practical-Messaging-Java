@@ -1,9 +1,15 @@
+package sender;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import greetings.Greeting;
+import greetings.GreetingResponse;
+import simplemessaging.RequestReplyChannelProducer;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public class Producer {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
 
         try (RequestReplyChannelProducer<Greeting, GreetingResponse> channel =
@@ -23,16 +29,18 @@ public class Producer {
                                      throw new RuntimeException("Error deserializing message", e);
                                  }
                              },
-                             "greeting",
+                             "greeting-request",
                              "localhost"
                      )
         ) {
             Greeting greeting = new Greeting();
             greeting.setSalutation("Hello World!");
+            greeting.setCorrelationId(UUID.randomUUID());
+            greeting.setReplyTo("greeting-replyto");
 
             GreetingResponse response = channel.call(greeting, 5000);
 
-            System.out.println("Sent message Greeting " + greeting.getSalutation() +
+            System.out.println("Sent message greetings.Greeting " + greeting.getSalutation() +
                     " Correlation Id " + greeting.getCorrelationId());
 
             if (response != null) {
@@ -47,6 +55,6 @@ public class Producer {
         }
 
         System.out.println("Press [enter] to exit.");
-        new java.util.Scanner(System.in).nextLine();
+        System.in.read();
     }
 }

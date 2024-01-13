@@ -1,3 +1,5 @@
+package simplemessaging;
+
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
@@ -10,8 +12,8 @@ import java.util.function.Function;
 public class RequestReplyChannelConsumer<T extends IAmAMessage> implements AutoCloseable {
     private final Function<String, T> messageDeserializer;
     private final String queueName;
-    private static final String exchangeName = "practical-messaging-request-reply";
-    private static final String invalidExchangeName = "practical-messaging-invalid";
+    private static final String EXCHANGE_NAME = "practical-messaging-request-reply";
+    private static final String INVALID_EXCHANGE_NAME = "practical-messaging-invalid";
     private final Connection connection;
     private final Channel channel;
 
@@ -48,18 +50,18 @@ public class RequestReplyChannelConsumer<T extends IAmAMessage> implements AutoC
         var invalidRoutingKey = "invalid" + routingKey;
         var invalidMessageQueueName = invalidRoutingKey;
 
-        channel.exchangeDeclare(exchangeName, BuiltinExchangeType.DIRECT, false);
+        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT, false);
 
         var arguments = new HashMap<String, Object>();
-        arguments.put("x-dead-letter-exchange", invalidExchangeName);
+        arguments.put("x-dead-letter-exchange", INVALID_EXCHANGE_NAME);
         arguments.put("x-dead-letter-routing-key", invalidRoutingKey);
 
         channel.queueDeclare(queueName, false, false, false, arguments);
-        channel.queueBind(queueName, exchangeName, routingKey);
+        channel.queueBind(queueName, EXCHANGE_NAME, routingKey);
 
-        channel.exchangeDeclare(invalidExchangeName, BuiltinExchangeType.DIRECT, false);
+        channel.exchangeDeclare(INVALID_EXCHANGE_NAME, BuiltinExchangeType.DIRECT, false);
         channel.queueDeclare(invalidMessageQueueName, false, false, false, null);
-        channel.queueBind(invalidMessageQueueName, invalidExchangeName, invalidRoutingKey);
+        channel.queueBind(invalidMessageQueueName, INVALID_EXCHANGE_NAME, invalidRoutingKey);
     }
 
     /*

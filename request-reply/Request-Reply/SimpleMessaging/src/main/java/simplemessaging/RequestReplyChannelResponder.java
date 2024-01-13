@@ -1,5 +1,6 @@
+package simplemessaging;
+
 import com.rabbitmq.client.*;
-import com.rabbitmq.client.impl.AMQBasicProperties;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,8 +29,6 @@ public class RequestReplyChannelResponder<TResponse extends IAmAResponse> implem
         try {
             System.out.println(String.format("Responding on queue %s to message with correlation id %s",
                     replyQueueName, response.getCorrelationId().toString()));
-
-            channel.queueDeclare(replyQueueName, false, false, false, null);
 
             // Create basic properties for the reply
             var properties = new AMQP.BasicProperties.Builder()

@@ -1,3 +1,5 @@
+package simplemessaging;
+
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
@@ -11,8 +13,8 @@ public class RequestReplyChannelProducer<T extends IAmAMessage, TResponse extend
     private final Function<T, String> messageSerializer;
     private final Function<String, TResponse> messageDeserializer;
     private final String routingKey;
-    private static final String exchangeName = "practical-messaging-request-reply";
-    private static final String invalidExchangeName = "practical-messaging-invalid";
+    private static final String EXCHANGE_NAME = "practical-messaging-request-reply";
+    private static final String INVALID_EXCHANGE_NAME = "practical-messaging-invalid";
     private final Connection connection;
     private final Channel channel;
 
@@ -53,18 +55,18 @@ public class RequestReplyChannelProducer<T extends IAmAMessage, TResponse extend
         var invalidRoutingKey = "invalid" + routingKey;
         var invalidMessageQueueName = invalidRoutingKey;
 
-        channel.exchangeDeclare(exchangeName, BuiltinExchangeType.DIRECT, false);
+        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT, false);
 
         var arguments = new HashMap<String, Object>();
-        arguments.put("x-dead-letter-exchange", invalidExchangeName);
+        arguments.put("x-dead-letter-exchange", INVALID_EXCHANGE_NAME);
         arguments.put("x-dead-letter-routing-key", invalidRoutingKey);
 
         channel.queueDeclare(queueName, false, false, false, arguments);
-        channel.queueBind(queueName, exchangeName, routingKey);
+        channel.queueBind(queueName, EXCHANGE_NAME, routingKey);
 
-        channel.exchangeDeclare(invalidExchangeName, BuiltinExchangeType.DIRECT, false);
+        channel.exchangeDeclare(INVALID_EXCHANGE_NAME, BuiltinExchangeType.DIRECT, false);
         channel.queueDeclare(invalidMessageQueueName, false, false, false, null);
-        channel.queueBind(invalidMessageQueueName, invalidExchangeName, invalidRoutingKey);
+        channel.queueBind(invalidMessageQueueName, INVALID_EXCHANGE_NAME, invalidRoutingKey);
     }
 
     /**
@@ -86,6 +88,7 @@ public class RequestReplyChannelProducer<T extends IAmAMessage, TResponse extend
         //automatically has a routing key that is the queue name. Because we choose a random
         //queue name this means we avoid any collisions
         String replyQueue = channel.queueDeclare().getQueue();
+        message.setReplyTo(replyQueue);
 
         //In order to do guaranteed delivery, we want to use the broker's message store to hold the message,
         //so that it will be available even if the broker restarts
@@ -95,7 +98,7 @@ public class RequestReplyChannelProducer<T extends IAmAMessage, TResponse extend
                 .build();
 
         String body = messageSerializer.apply(message);
-        channel.basicPublish(exchangeName, routingKey, properties, body.getBytes(StandardCharsets.UTF_8));
+        channel.basicPublish(EXCHANGE_NAME, routingKey, properties, body.getBytes(StandardCharsets.UTF_8));
 
         //now we want to listen
         TResponse response = null;

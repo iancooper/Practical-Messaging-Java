@@ -1,6 +1,10 @@
+package greetings;
+
+import simplemessaging.IAmAResponse;
+
 import java.util.UUID;
 
-public class GreetingResponse implements IAmAResponse{
+public class GreetingResponse implements IAmAResponse {
     private UUID correlationId;
     private String result;
     @Override

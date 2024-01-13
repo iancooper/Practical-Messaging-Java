@@ -12,7 +12,7 @@
         <module>SimpleMessaging</module>
         <module>Sender</module>
         <module>Greetings</module>
-        <module>enricher.Enricher</module>
+        <module>Enricher</module>
         <module>Receiver</module>
     </modules>
 
