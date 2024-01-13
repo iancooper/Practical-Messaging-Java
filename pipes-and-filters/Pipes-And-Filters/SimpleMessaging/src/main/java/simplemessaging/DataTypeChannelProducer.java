@@ -33,10 +33,6 @@ public class DataTypeChannelProducer<T extends IAmAMessage> implements AutoClose
         channel = connection.createChannel();
 
         this.routingKey = routingKey;
-        String queueName = routingKey;
-
-        var invalidRoutingKey = "invalid" + routingKey;
-        var invalidMessageQueueName = invalidRoutingKey;
 
         channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT, false);
 
