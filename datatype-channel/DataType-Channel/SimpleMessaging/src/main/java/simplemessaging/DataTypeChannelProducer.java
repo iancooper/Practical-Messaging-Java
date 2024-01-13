@@ -10,7 +10,7 @@ import java.util.function.Function;
 public class DataTypeChannelProducer<T extends IAmAMessage> implements AutoCloseable {
     private final Function<T, String> messageSerializer;
     private final String routingKey;
-    private static final String exchangeName = "practical-messaging";
+    private static final String EXCHANGE_NAME = "practical-messaging";
     private final Connection connection;
     private final Channel channel;
 
@@ -41,9 +41,9 @@ public class DataTypeChannelProducer<T extends IAmAMessage> implements AutoClose
         this.routingKey = routingKey;
         String queueName = routingKey;  //use the routing key as the queue name for p2p semantics
 
-        channel.exchangeDeclare(exchangeName, BuiltinExchangeType.DIRECT, false);
+        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT, false);
         channel.queueDeclare(queueName, false, false, false, null);
-        channel.queueBind(queueName, exchangeName, routingKey);
+        channel.queueBind(queueName, EXCHANGE_NAME, routingKey);
     }
 
     /**
@@ -54,7 +54,7 @@ public class DataTypeChannelProducer<T extends IAmAMessage> implements AutoClose
      */
     public void send(T message) throws IOException {
         byte[] body = messageSerializer.apply(message).getBytes(StandardCharsets.UTF_8);
-        channel.basicPublish(exchangeName, routingKey, null, body);
+        channel.basicPublish(EXCHANGE_NAME, routingKey, null, body);
     }
 
     @Override

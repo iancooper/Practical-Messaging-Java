@@ -9,7 +9,7 @@ import java.util.concurrent.TimeoutException;
 public class PointToPointChannel implements AutoCloseable {
     private final String routingKey;
     private final String queueName;
-    private static final String exchangeName = "practical-messaging";
+    private static final String EXCHANGE_NAME = "practical-messaging";
     private final Connection connection;
     private final Channel channel;
 
@@ -39,9 +39,9 @@ public class PointToPointChannel implements AutoCloseable {
         routingKey = queueName;
         this.queueName = queueName;
 
-        channel.exchangeDeclare(exchangeName, BuiltinExchangeType.DIRECT, false);
+        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT, false);
         channel.queueDeclare(this.queueName, false, false, false, null);
-        channel.queueBind(this.queueName, exchangeName, routingKey);
+        channel.queueBind(this.queueName, EXCHANGE_NAME, routingKey);
     }
 
     /**
@@ -52,7 +52,7 @@ public class PointToPointChannel implements AutoCloseable {
      */
     public void send(String message) throws IOException {
         byte[] body = message.getBytes(StandardCharsets.UTF_8);
-        channel.basicPublish(exchangeName, routingKey, null, body);
+        channel.basicPublish(EXCHANGE_NAME, routingKey, null, body);
     }
 
     /**

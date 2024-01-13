@@ -11,7 +11,7 @@ import java.util.function.Function;
 public class DataTypeChannelConsumer<T extends IAmAMessage> implements AutoCloseable {
     private final Function<String, T> messageDeserializer;
     private final String queueName;
-    private static final String exchangeName = "practical-messaging";
+    private static final String EXCHANGE_NAME = "practical-messaging";
     private final Connection connection;
     private final Channel channel;
 
@@ -41,9 +41,9 @@ public class DataTypeChannelConsumer<T extends IAmAMessage> implements AutoClose
 
         queueName = routingKey;
 
-        channel.exchangeDeclare(exchangeName, BuiltinExchangeType.DIRECT, false);
+        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT, false);
         channel.queueDeclare(queueName, false, false, false, null);
-        channel.queueBind(queueName, exchangeName, routingKey);
+        channel.queueBind(queueName, EXCHANGE_NAME, routingKey);
     }
 
     /*
