@@ -3,6 +3,9 @@ package simplemessaging;
 import java.util.function.Function;
 
 
+import java.util.function.Function;
+
+
 public class PollingConsumer<T extends IAmAMessage> implements Runnable {
     private final IAmAHandler<T> messageHandler;
     private final Function<String, T> messageDeserializer;
@@ -31,3 +34,4 @@ public class PollingConsumer<T extends IAmAMessage> implements Runnable {
         }
     }
 }
+

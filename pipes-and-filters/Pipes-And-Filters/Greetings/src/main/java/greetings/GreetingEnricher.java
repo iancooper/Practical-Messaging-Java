@@ -1,4 +1,8 @@
-public class GreetingEnricher implements IAmAnOperation<Greeting, EnrichedGreeting>{
+package greetings;
+
+import simplemessaging.IAmAnOperation;
+
+public class GreetingEnricher implements IAmAnOperation<Greeting, EnrichedGreeting> {
     @Override
     public EnrichedGreeting execute(Greeting message) {
         System.out.printf("Recieved greeing: %s%n", message.getSalutation());

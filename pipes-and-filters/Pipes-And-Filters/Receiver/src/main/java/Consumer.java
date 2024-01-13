@@ -1,11 +1,15 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
+import greetings.EnrichedGreeting;
+import greetings.GreetingHandler;
+import simplemessaging.IAmAHandler;
+import simplemessaging.PollingConsumer;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
 
 public class Consumer {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         IAmAHandler<EnrichedGreeting> greetingHandler = new GreetingHandler();
 
         Function<String, EnrichedGreeting> messageDeserializer = messageBody -> {
@@ -19,33 +23,15 @@ public class Consumer {
 
         var consumer = new PollingConsumer<EnrichedGreeting>(greetingHandler, messageDeserializer, "enrichedgreeting", "localhost");
 
-        var executorService = Executors.newSingleThreadExecutor();
-
-        try {
+        try (var executorService = Executors.newSingleThreadExecutor()) {
             System.out.println("Consumer running, entering loop until signalled");
             System.out.println(" Press [enter] to exit.");
 
             // has its own thread and will continue until signaled
-            var task = consumer.run(executorService);
-
-            while (true) {
-                // loop until we get a keyboard interrupt
-                if (System.in.available() > 0) {
-                    // Note: This will deadlock with System.out.println on the task thread unless we have called println first
-                    char key = (char) System.in.read();
-                    if (key == '\n') {
-                        // signal exit
-                        task.cancel(true);
-                        break;
-                    }
-
-                    Thread.yield();
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            executorService.shutdown();
+            var future = executorService.submit(consumer);
+            System.in.read();
+            System.out.println("Exiting Consumer");
+            future.cancel(true);
         }
     }
 }

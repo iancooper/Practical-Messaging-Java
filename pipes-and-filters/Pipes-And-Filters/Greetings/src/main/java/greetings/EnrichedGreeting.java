@@ -1,4 +1,8 @@
-public class EnrichedGreeting extends Greeting implements IAmAMessage{
+package greetings;
+
+import simplemessaging.IAmAMessage;
+
+public class EnrichedGreeting extends Greeting implements IAmAMessage {
     private String recipient;
 
     public String getRecipient() {

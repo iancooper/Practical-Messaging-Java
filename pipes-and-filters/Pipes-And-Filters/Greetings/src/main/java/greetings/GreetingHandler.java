@@ -1,3 +1,7 @@
+package greetings;
+
+import simplemessaging.IAmAHandler;
+
 public class GreetingHandler implements IAmAHandler<EnrichedGreeting> {
     @Override
     public void handle(EnrichedGreeting message) {
