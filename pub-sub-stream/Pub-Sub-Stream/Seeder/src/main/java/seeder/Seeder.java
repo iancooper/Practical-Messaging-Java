@@ -31,7 +31,7 @@ public class Seeder {
                 e.printStackTrace();
                 return null;
             }
-        }, "localhost")) {
+        })) {
             Biography[] biographies = {
                     new Biography("Clarissa Harlow", "A young woman whose quest for virtue is continually thwarted by her family."),
                     new Biography("Pamela Andrews", "\"A young woman whose virtue is rewarded."),

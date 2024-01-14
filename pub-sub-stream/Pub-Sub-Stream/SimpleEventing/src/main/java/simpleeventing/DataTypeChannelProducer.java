@@ -14,11 +14,14 @@ public class DataTypeChannelProducer<T extends  IAmAMessage> implements AutoClos
     private final Producer<String, String> _producer;
     private final String _topic;
 
-    public DataTypeChannelProducer(Function<T, String> messageSerializer, String hostName) {
+    public DataTypeChannelProducer(Function<T, String> messageSerializer) {
+         this(messageSerializer, "localhost:9092");
+    }
+    public DataTypeChannelProducer(Function<T, String> messageSerializer, String bootStrapServer) {
         _messageSerializer = messageSerializer;
 
         Properties producerProps = new Properties();
-        producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootStrapServer);
         producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 

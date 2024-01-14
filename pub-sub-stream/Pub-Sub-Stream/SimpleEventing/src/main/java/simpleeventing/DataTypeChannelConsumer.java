@@ -26,11 +26,15 @@ public class DataTypeChannelConsumer<T> implements Runnable {
     }
 
     public DataTypeChannelConsumer(Function<ConsumerRecord<String, String>, T> messageDeserializer, Function<T, Boolean> handler) {
+        this(messageDeserializer, handler, "localhost:9092");
+    }
+
+    public DataTypeChannelConsumer(Function<ConsumerRecord<String, String>, T> messageDeserializer, Function<T, Boolean> handler, String bootStrapServer) {
         this.messageDeserializer = messageDeserializer;
         this.handler = handler;
 
         Properties consumerProps = new Properties();
-        consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootStrapServer);
         consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "SimpleEventing");
         consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         consumerProps.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
