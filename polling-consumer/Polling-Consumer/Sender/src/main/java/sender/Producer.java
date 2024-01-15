@@ -14,8 +14,7 @@ public class Producer {
             try {
                 return objectMapper.writeValueAsString(greeting);
             } catch (IOException e) {
-                e.printStackTrace();
-                return null;
+                throw new RuntimeException("Error serializing message");
             }
         },"greeting", "localhost")) {
             Greeting greeting = new Greeting();

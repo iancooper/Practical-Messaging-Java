@@ -16,8 +16,7 @@ public class Consumer {
             try {
                 return new ObjectMapper().readValue(messageBody, EnrichedGreeting.class);
             } catch (Exception e) {
-                e.printStackTrace();
-                return null;
+                throw new RuntimeException("Error deserializing message", e);
             }
         };
 

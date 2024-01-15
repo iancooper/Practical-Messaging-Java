@@ -29,8 +29,7 @@ public class Producer {
             try {
                 return objectMapper.writeValueAsString(greeting);
             } catch (IOException e) {
-                e.printStackTrace();
-                return null;
+                throw new RuntimeException("Error deserializing message", e);
             }
         }, "greeting", "localhost")) {
             System.out.println(" Press [enter] to exit.");

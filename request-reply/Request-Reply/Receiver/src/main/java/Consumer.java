@@ -18,8 +18,7 @@ public class Consumer {
             try {
                 return new ObjectMapper().readValue(messageBody, Greeting.class);
             } catch (Exception e) {
-                e.printStackTrace();
-                return null;
+                throw new RuntimeException("Error deserializing message", e);
             }
         };
 
@@ -27,8 +26,7 @@ public class Consumer {
           try{
               return new ObjectMapper().writeValueAsString(response);
           } catch (Exception e) {
-              e.printStackTrace();
-              return null;
+              throw new RuntimeException("Error deserializing message", e);
           }
         };
 

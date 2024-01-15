@@ -14,8 +14,7 @@ public class Consumer {
             try {
                 return objectMapper.readValue(messageBody, Greeting.class);
             } catch (IOException e) {
-                e.printStackTrace();
-                return null;
+                throw new RuntimeException("Error deserializing message", e);
             }
         }, "greeting", "localhost")) {
             Greeting greeting = channel.receive();

@@ -19,16 +19,14 @@ public class Enricher {
             try {
                 return new ObjectMapper().readValue(messageBody, Greeting.class);
             } catch (IOException e) {
-                e.printStackTrace();
-                return null;
+                throw new RuntimeException("Error deserializing message", e);
             }
         };
         Function<Greeting, String> enrichedGreetingSerializer = enrichedGreeting -> {
             try {
                 return new ObjectMapper().writeValueAsString(enrichedGreeting);
             } catch (IOException e) {
-                e.printStackTrace();
-                return null;
+                throw new RuntimeException("Error deserializing message", e);
             }
         };
 
