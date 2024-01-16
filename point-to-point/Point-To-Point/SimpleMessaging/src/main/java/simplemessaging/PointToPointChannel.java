@@ -39,9 +39,9 @@ public class PointToPointChannel implements AutoCloseable {
         routingKey = queueName;
         this.queueName = queueName;
 
-        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT, false);
-        channel.queueDeclare(this.queueName, false, false, false, null);
-        channel.queueBind(this.queueName, EXCHANGE_NAME, routingKey);
+        //TODO: declare a non-durable direct exchange via the channel
+        //TODO: declare a non-durable queue. non-exc;usive, that does not auto-delete. Use _queuename
+        //TODO: bind _queuename to _routingKey on the exchange
     }
 
     /**
@@ -52,7 +52,7 @@ public class PointToPointChannel implements AutoCloseable {
      */
     public void send(String message) throws IOException {
         byte[] body = message.getBytes(StandardCharsets.UTF_8);
-        channel.basicPublish(EXCHANGE_NAME, routingKey, null, body);
+        //TODO: Publish on the exchange using the routing key
     }
 
     /**
@@ -61,12 +61,12 @@ public class PointToPointChannel implements AutoCloseable {
      * producer will create as well as the consumer making the ordering unimportant
      */
     public String receive() throws IOException {
-        GetResponse result = channel.basicGet(queueName, true);
-        if (result != null) {
-            return new String(result.getBody(), StandardCharsets.UTF_8);
-        } else {
-            return null;
-        }
+        //TODO: Use basic get to read a message, auto acknowledge the message
+        //if (result != null) {
+        //    return new String(result.getBody(), StandardCharsets.UTF_8);
+        //} else {
+        //    return null;
+        //}
     }
 
     @Override
