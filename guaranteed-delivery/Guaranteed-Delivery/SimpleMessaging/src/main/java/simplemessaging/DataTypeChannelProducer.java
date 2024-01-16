@@ -72,8 +72,8 @@ public class DataTypeChannelProducer<T extends IAmAMessage> implements AutoClose
 
         //In order to do guaranteed delivery, we want to use the broker's message store to hold the message,
         //so that it will be available even if the broker restarts
-        var basicProperties = new AMQP.BasicProperties.Builder();
-        basicProperties.deliveryMode(2);    //persistent
+
+        // TODO: Set the basic properties to ensure that we have persistent messages
 
         channel.basicPublish(EXCHANGE_NAME, routingKey, basicProperties.build(), body);
     }
