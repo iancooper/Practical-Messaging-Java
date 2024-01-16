@@ -17,17 +17,15 @@ public class PollingConsumer<T extends IAmAMessage> implements Runnable {
     }
 
     public void run() {
-        while (!Thread.currentThread().isInterrupted()) {
-            try (DataTypeChannelConsumer<T> channel = new DataTypeChannelConsumer<>(messageDeserializer,routingKey, hostName)) {
-                T message = channel.receive();
-                if (message != null) {
-                    messageHandler.handle(message);
-                } else {
-                    Thread.yield();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+
+        /*
+         * TODO:
+         * while the thread is not interrupted
+         *     create a data type channel consumer
+         *         try go get a message
+         *         dispatch that message to a handler
+         *         yield
+         *     dispose of the channel
+         */
     }
 }

@@ -23,15 +23,9 @@ public class Consumer {
 
         var consumer = new PollingConsumer<Greeting>(greetingHandler, messageDeserializer, "greeting", "localhost");
 
-
-        try (var executorService = Executors.newSingleThreadExecutor()) {
-            System.out.println("Consumer running, entering loop until signalled");
-            System.out.println(" Press [enter] to exit.");
-
-            var future = executorService.submit(consumer);
-            System.in.read();
-            System.out.println("Exiting consumer");
-            future.cancel(true);
-        }
+        //TODO: Create a single threaded executor
+        //Submit the consumer to the executor
+        //Poll for a keyboard interrupt
+        //On receiving the interrupt cancel the Future returned from the executor
     }
 }
