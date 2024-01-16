@@ -22,17 +22,20 @@ public class Filter<TIn extends IAmAMessage, TOut extends IAmAMessage> implement
     public void run() {
         try {
             while (!Thread.currentThread().isInterrupted()) {
-                try (DataTypeChannelConsumer<TIn> inPipe = new DataTypeChannelConsumer<>(messageDeserializer, inRoutingKey, hostName)) {
-                    TIn inMessage = inPipe.receive();
-                    if (inMessage != null) {
-                        TOut outMessage = operation.execute(inMessage);
-                        try (DataTypeChannelProducer<TOut> outPipe = new DataTypeChannelProducer<>(messageSerializer, outRoutingKey, hostName)) {
-                            outPipe.send(outMessage);
-                        }
-                    } else {
-                        Thread.yield();
-                    }
-                }
+                /*TODO
+                 *
+                 * Create an in pipe from a DataTypeChannelConsumer
+                 * while true
+                 *     read from the inpipe
+                 *     if we get a message
+                 *         use the operation to transform the message
+                 *         create a DataTypeChannelProducer for the out pipe
+                 *             Send the message on the outpipe
+                 *         dispose of the producer
+                 *     else
+                 *        yield
+                 * displose of the consumer
+                 */
             }
         } catch (Exception e) {
             e.printStackTrace();
