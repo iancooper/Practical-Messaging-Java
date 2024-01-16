@@ -53,7 +53,7 @@ public class DataTypeChannelProducer<T extends IAmAMessage> implements AutoClose
      * @throws IOException An error publishing the message to RMQ
      */
     public void send(T message) throws IOException {
-        byte[] body = messageSerializer.apply(message).getBytes(StandardCharsets.UTF_8);
+        //TODO: Serialize the message, Tip: convert to UTF8
         channel.basicPublish(EXCHANGE_NAME, routingKey, null, body);
     }
 

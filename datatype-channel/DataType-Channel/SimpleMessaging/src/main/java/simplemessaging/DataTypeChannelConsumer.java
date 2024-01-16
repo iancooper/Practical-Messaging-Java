@@ -54,7 +54,7 @@ public class DataTypeChannelConsumer<T extends IAmAMessage> implements AutoClose
     public T receive() throws IOException {
         GetResponse result = channel.basicGet(queueName, true);
         if (result != null) {
-            return messageDeserializer.apply(new String(result.getBody(), StandardCharsets.UTF_8));
+            //TODO: deserialize the message
         } else {
             return null;
         }

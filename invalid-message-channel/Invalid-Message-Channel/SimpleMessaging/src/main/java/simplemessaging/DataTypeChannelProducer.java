@@ -49,16 +49,16 @@ public class DataTypeChannelProducer<T extends IAmAMessage> implements AutoClose
 
         channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT, false);
 
-        var arguments = new HashMap<String, Object>();
-        arguments.put("x-dead-letter-exchange", INVALID_EXCHANGE_NAME);
-        arguments.put("x-dead-letter-routing-key", invalidRoutingKey);
+        //TODO create an argument hashmap, that has arguments for the invalid message exchange and routing key
 
-        channel.queueDeclare(queueName, false, false, false, arguments);
+        //TODO: Create our consumer queue, but add the arguments that hook up the invalid message queue (tip DLQ in RMQ docs)
         channel.queueBind(queueName, EXCHANGE_NAME, routingKey);
 
-        channel.exchangeDeclare(INVALID_EXCHANGE_NAME, BuiltinExchangeType.DIRECT, false);
-        channel.queueDeclare(invalidMessageQueueName, false, false, false, null);
-        channel.queueBind(invalidMessageQueueName, INVALID_EXCHANGE_NAME, invalidRoutingKey);
+        //declare a queue for invalid messages off an invalid message exchange
+        //messages that we nack without requeue will go here
+        // TODO; Declare an invalid message queue exchange, direct and durable
+        // TODO: declare an invalid message queue, durable
+        // TODO: bind the queue to the exchange
     }
 
     /**
