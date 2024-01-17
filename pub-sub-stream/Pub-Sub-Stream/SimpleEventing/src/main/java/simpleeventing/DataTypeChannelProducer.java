@@ -20,26 +20,25 @@ public class DataTypeChannelProducer<T extends  IAmAMessage> implements AutoClos
     public DataTypeChannelProducer(Function<T, String> messageSerializer, String bootStrapServer) {
         _messageSerializer = messageSerializer;
 
-        Properties producerProps = new Properties();
-        producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootStrapServer);
-        producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        //TODO: Create a ProducerConfig file to configure Kafka. You will need to set:
+        // BootstrapServers
+        // Key and Value String Serializers
 
-        _producer = new KafkaProducer<>(producerProps);
+        //Create the Kafka Producer
         _topic = "Pub-Sub-Stream-Biography";
     }
 
     public void send(T message) {
         String body = _messageSerializer.apply(message);
-        _producer.send(new ProducerRecord<>(_topic, message.getId(), body));
+        //TODO: Send the message to Kafka
     }
 
     public void flush() {
-        _producer.flush();
+        //TODO: Flush the producer
     }
 
     @Override
     public void close() {
-        _producer.close();
+        //TODO: Close the producer
     }
 }

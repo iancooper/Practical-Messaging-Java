@@ -33,39 +33,35 @@ public class DataTypeChannelConsumer<T> implements Runnable {
         this.messageDeserializer = messageDeserializer;
         this.handler = handler;
 
-        Properties consumerProps = new Properties();
-        consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootStrapServer);
-        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "SimpleEventing");
-        consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        consumerProps.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
-        consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        //TODO: Create a ConsumerConfig file to configure Kafka. You will need to set:
+        // BootstrapServers
+        // GroupId
+        // AutoOffsetReset (earliest)
+        // EnableAutoCommit (true)
+        // EnableAutoOffsetStore (false)
+        // Key and Value String Serializers
 
-        consumer = new KafkaConsumer<>(consumerProps);
-        consumer.subscribe(Collections.singletonList("Pub-Sub-Stream-Biography"), new HandleRebalance());
+        //TODO: Build a Consumer using the ConsumerConfig above
+        // SetErrorHandler to write to the console
+        // SetLogHandler to write to the console
+        // SetPartitionsRevokedHandler to store the offset for each partition
+
+        //TODO: Subscribe to the topic "Pub-Sub-Stream-Biography" + typeof(T).FullName
     }
 
     public void run() {
         try {
             while (true) {
-                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
 
-                if (!records.isEmpty()){
-                    records.forEach(record -> {
-                            var data = messageDeserializer.apply(record);
-                            var result = handler.apply(data);
+                //TODO: Poll Kafka for records
+                //If there are records
+                //  For each record
+                //  Translate the message using the _translator function
+                //  Handle the message using the _handler function
+                //  If the handler was successful, Store sthe offset for the partition in the background thread
+                //Else
+                // yield
 
-                            if (result) {
-                                currentOffsets.put(new TopicPartition(record.topic(), record.partition()),
-                                        new OffsetAndMetadata(record.offset()+1, "no metadata"));
-
-                                //production code could choose to batch here
-                                consumer.commitAsync(currentOffsets, null);
-                            }
-                    });
-                } else {
-                    Thread.yield();
-                }
             }
         } catch (WakeupException e){
            //shut down the Kafka consumer
