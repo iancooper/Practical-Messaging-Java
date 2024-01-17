@@ -87,41 +87,31 @@ public class RequestReplyChannelProducer<T extends IAmAMessage, TResponse extend
         //Note that we do not need bind to the default exchange; any queue declared on the default exchange
         //automatically has a routing key that is the queue name. Because we choose a random
         //queue name this means we avoid any collisions
-        String replyQueue = channel.queueDeclare().getQueue();
-        message.setReplyTo(replyQueue);
+        // TODO: Declare a queue for replies, non-durable, exclusive, auto-deleting. no queue name
+        // TODO: Assign auto generated queuename to variable for later use
 
+        // TODO: serialize the body, and turn it into a byte[] with URF8 encoding
         //In order to do guaranteed delivery, we want to use the broker's message store to hold the message,
         //so that it will be available even if the broker restarts
-        var properties = new AMQP.BasicProperties.Builder()
-                .deliveryMode(2) // persistent
-                .replyTo(replyQueue)
-                .build();
-
-        String body = messageSerializer.apply(message);
-        channel.basicPublish(EXCHANGE_NAME, routingKey, properties, body.getBytes(StandardCharsets.UTF_8));
+        // TODO: Create basic properties for the channel
+        // TODO: Make the message persistent
+        // TODO: Set reply to on the props to the random queue name from above
+        // TODO: Publish to the consumer on ExchangeName with _routingKey and props and body
 
         //now we want to listen
-        TResponse response = null;
-        long timeoutMillis = System.currentTimeMillis() + timeoutInMilliseconds;
-        while (System.currentTimeMillis() <= timeoutMillis) {
-            GetResponse result = channel.basicGet(replyQueue, false);
-            if (result != null) {
-                try {
-                    response = messageDeserializer.apply(new String(result.getBody(), StandardCharsets.UTF_8));
-                    channel.basicAck(result.getEnvelope().getDeliveryTag(), false);
-                } catch (IOException e) {
-                    System.out.println("Error processing the incoming message " + e);
-                    channel.basicAck(result.getEnvelope().getDeliveryTag(), false);
-                }
-                break;
-            } else {
-                Thread.yield();
-            }
-        }
-
-        // we will delete the temporary queue next time around
-        channel.queueDeleteNoWait(replyQueue, false, false);
-        return response;
+        /*
+         * TODO
+         * whilst a time the timeout period is not up
+         *     read from the reply queue
+         *     if we have a message
+         *         serialize the message (hint: convert UTF8 byte array to string
+         *         ack the message
+         *         break
+         *     else
+         *         yield briefy, but not too long as we have a timeout
+         * delete the reply queue when done
+         * return the response
+         */
     }
 
     @Override

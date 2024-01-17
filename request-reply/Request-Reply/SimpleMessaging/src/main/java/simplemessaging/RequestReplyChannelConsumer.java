@@ -73,11 +73,15 @@ public class RequestReplyChannelConsumer<T extends IAmAMessage> implements AutoC
         GetResponse result = channel.basicGet(queueName, false);
         if (result != null) {
             try {
-                T message = messageDeserializer.apply(new String(result.getBody(), StandardCharsets.UTF_8));
-                channel.basicAck(result.getEnvelope().getDeliveryTag(), false);
-                message.setReplyTo(result.getProps().getReplyTo());
-                System.out.printf("Reply requested to %s", message.getReplyTo());
-                return message;
+                /*
+                 * TODO
+                 * deserialize the message
+                 * Acknowledge the message (use the delivery tag)
+                 * set the reply to property of the message, from the result properties
+                 * return the message
+                 */
+
+                //T message =
             }
             catch (RuntimeException e){
                 ///put format errors onto the invalid message queue

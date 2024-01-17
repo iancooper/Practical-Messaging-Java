@@ -21,12 +21,13 @@ public class PollingConsumer<T extends IAmAMessage, TResponse extends IAmARespon
         while (!Thread.currentThread().isInterrupted()) {
             try (var channel = new RequestReplyChannelConsumer<T>(messageDeserializer, routingKey, hostName)) {
                 T message = channel.receive();
-                if (message != null) {
-                    var response = messageHandler.handle(message);
-
-                    try (var responder = new RequestReplyChannelResponder<TResponse>(messageSerializer, hostName)) {
-                        responder.respond(message.getReplyTo(), response);
-                    }
+                /*
+                 * TODO: receive a request on the channel
+                 * if the request is not null then
+                 *     handle the message
+                 *     create a RequestReplyChannelResponder
+                 *     respond to the request, with the response from the handler
+                 */
                 } else {
                     Thread.yield();
                 }

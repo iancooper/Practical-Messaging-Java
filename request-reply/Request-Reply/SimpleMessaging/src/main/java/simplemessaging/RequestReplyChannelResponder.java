@@ -30,16 +30,15 @@ public class RequestReplyChannelResponder<TResponse extends IAmAResponse> implem
             System.out.println(String.format("Responding on queue %s to message with correlation id %s",
                     replyQueueName, response.getCorrelationId().toString()));
 
-            // Create basic properties for the reply
-            var properties = new AMQP.BasicProperties.Builder()
-                    .correlationId(response.getCorrelationId().toString())
-                            .build();
+            /*
+             * TODO: crate basic properties via the channel
+             * Set the correlation id
+             * serialize the message
+             * Turn it into UTF8
+             * Publish on the default exchange hint: "" where routing key = queue name
+             *
+             */
 
-            // Serialize the response to bytes
-            String body = messageSerializer.apply(response);
-
-            // Publish the response
-            channel.basicPublish("", replyQueueName, properties, body.getBytes(StandardCharsets.UTF_8));
 
             System.out.println(String.format("Responded on queue %s at %s", replyQueueName, System.currentTimeMillis()));
 
