@@ -27,21 +27,19 @@ public class RoutingStep<T extends IAmARoutingSlip> implements Runnable {
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 try (DataTypeChannelConsumer<T> inPipe = new DataTypeChannelConsumer<>(messageDeserializer, thisRoutingKey, hostName)) {
-                    T inMessage = inPipe.receive();
-                    if (inMessage != null) {
-                        T outMessage = operation.execute(inMessage);
-                        outMessage.getSteps().get(inMessage.getCurrentStep()).setCompleted(true);
-
-                        int nextStepNo = inMessage.getCurrentStep() + 1;
-                        if (inMessage.getSteps().containsKey(nextStepNo)) {
-                            var nextStep = inMessage.getSteps().get(nextStepNo);
-                            String outRoutingStep = nextStep.getRoutingKey();
-
-                            outMessage.setCurrentStep(nextStepNo);
-                            try (DataTypeChannelProducer<T> outPipe = new DataTypeChannelProducer<>(messageSerializer, outRoutingStep, hostName)) {
-                                outPipe.send(outMessage);
-                            }
-                        }
+                        /* TODO
+                         * receive a message from the in pipe
+                         * if we get non-null message
+                         *     execute the operation on it to get the out message
+                         *     complete the step on te in message
+                         *     increment the step counter
+                         *     if there is a step for the next step counter
+                         *         retrieve the routing key from the next step
+                         *         set the next step on the outgoing message
+                         *         create an outpipe DataTypeChannelProducer
+                         *             send the message
+                         *         dispose of the producer
+                         */
                     } else {
                         Thread.yield();
                     }
