@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.goparamore</groupId>
+    <artifactId>MessagePump</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>Model</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.goparamore</groupId>
+      <artifactId>SimpleMessaging</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
+    <!-- This is the domain, and this is a dependency on a specific message broker.
+         It is here because PlaceOrderHandler names a RabbitMQ type in its method signature.
+         Exercise 1 asks you whether that is all right. -->
+    <dependency>
+      <groupId>com.rabbitmq</groupId>
+      <artifactId>amqp-client</artifactId>
+      <version>${amqp.version}</version>
+    </dependency>
+  </dependencies>
+</project>
