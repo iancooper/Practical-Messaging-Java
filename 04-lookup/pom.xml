@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>io.goparamore</groupId>
+  <artifactId>Lookup</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <!-- One module per directory, which is how the dependency rule in exercise 1 becomes a
+       build error rather than a code-review opinion. See SimpleMessaging/pom.xml. -->
+  <modules>
+    <module>SimpleMessaging</module>
+    <module>SimpleEventing</module>
+    <module>Model</module>
+    <!-- The only module that names SQLite, and the reason it is a module at all rather than a
+         class in Model. Same rule and same reason as SimpleMessaging's amqp-client: the thing
+         that knows which technology this is gets a boundary drawn round it. -->
+    <module>LocalCopy</module>
+    <module>Sender</module>
+    <module>Receiver</module>
+    <module>StreamConsumer</module>
+    <!-- The catalogue service, and the process that keeps our copy of what it says. Separate
+         modules because they are separate programs, and the price consumer being a process
+         of its own is what makes Probe B a kill -9 rather than a flag. -->
+    <module>PriceSeeder</module>
+    <module>PriceConsumer</module>
+  </modules>
+
+  <properties>
+    <maven.compiler.release>21</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- These are teaching samples. They omit most of the error handling production code
+         would need; they trade maintainability for focus. -->
+    <amqp.version>5.35.0</amqp.version>
+    <jackson.version>2.22.2</jackson.version>
+    <slf4j.version>2.0.19</slf4j.version>
+    <kafka.version>4.3.1</kafka.version>
+    <!-- The local copy's store. Checked against the advisory database before it was pinned:
+         the one published advisory against this artifact, GHSA-6phf-6h5g-97j2, was fixed in
+         3.41.2.2, and taking whatever resolved first is how you end up behind one. -->
+    <sqlite.version>3.53.4.0</sqlite.version>
+  </properties>
+
+  <!-- sqlite-jdbc pins slf4j-api 1.7.36, and in PriceConsumer (the one module that does not
+       also depend on SimpleMessaging) that old version won Maven's nearest-wins resolution.
+       The symptom was three lines of "Failed to load class StaticLoggerBinder" on every start,
+       which is slf4j 1.x saying it found no binding while a 2.x binding sat beside it.
+
+       Pinning the API here settles it once for every module, rather than in whichever pom
+       notices next. It is also the smaller lesson inside exercise 4's larger one: adding a
+       dependency to one module changed what a different module logged with.
+
+       (An em dash cannot be written as two hyphens inside an XML comment, which is why this
+       one reads differently from every other comment in the exercise.) -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.16.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.5.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>3.11.0</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.goparamore</groupId>
+    <artifactId>Lookup</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>SimpleEventing</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.goparamore</groupId>
+      <artifactId>SimpleMessaging</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+
+    <!-- Same rule, same reason as amqp-client in SimpleMessaging: the eventing gateway is the
+         only module that may name a Kafka type. Optional, so nothing downstream of it can,
+         unless it asks for the dependency itself. -->
+    <dependency>
+      <groupId>org.apache.kafka</groupId>
+      <artifactId>kafka-clients</artifactId>
+      <version>${kafka.version}</version>
+      <optional>true</optional>
+    </dependency>
+  </dependencies>
+</project>

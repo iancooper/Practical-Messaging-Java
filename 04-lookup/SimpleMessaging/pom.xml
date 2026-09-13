@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.goparamore</groupId>
+    <artifactId>Lookup</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>SimpleMessaging</artifactId>
+
+  <dependencies>
+    <!-- The gateway is the one module that is allowed to know which broker this is.
+
+         <optional>true</optional> stops the dependency flowing to modules that depend on us:
+         they can still be handed the jar at runtime, but they cannot *name* a RabbitMQ type
+         without asking for amqp-client themselves.
+
+         So "the domain must not depend on the broker" stops being a code-review opinion and
+         becomes a compile error: 'package com.rabbitmq.client does not exist'. That is worth
+         knowing about beyond this exercise. -->
+    <dependency>
+      <groupId>com.rabbitmq</groupId>
+      <artifactId>amqp-client</artifactId>
+      <version>${amqp.version}</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+  </dependencies>
+</project>

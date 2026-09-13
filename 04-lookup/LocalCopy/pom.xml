@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.goparamore</groupId>
+    <artifactId>Lookup</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>LocalCopy</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.goparamore</groupId>
+      <artifactId>Model</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+
+    <!-- The only module in the build that names SQLite, and the reason it is a module of its own
+         rather than a class in Model.
+
+         Same rule and same reason as SimpleMessaging's amqp-client and SimpleEventing's
+         kafka-clients: the thing that knows which technology this is gets a boundary drawn round
+         it. The boundary here is which way the dependencies run: Model does not depend on
+         LocalCopy, LocalCopy depends on Model, so the domain has no route to a SQLite type and
+         naming one in Model/ does not compile.
+
+         Note what is deliberately *absent*: <optional>true</optional>, which SimpleMessaging and
+         SimpleEventing both use. Optional stops a dependency flowing downstream at run time as
+         well as at compile time, and Receiver and PriceConsumer need this jar on the classpath to
+         open the file at all. A JDBC driver is loaded by name, so losing it is a "No suitable
+         driver found for jdbc:sqlite" at the first query rather than a compile error. Maven has no
+         way to say "compile-time private, runtime transitive", and the rule that matters here is
+         satisfied without one. -->
+    <dependency>
+      <groupId>org.xerial</groupId>
+      <artifactId>sqlite-jdbc</artifactId>
+      <version>${sqlite.version}</version>
+    </dependency>
+  </dependencies>
+</project>
