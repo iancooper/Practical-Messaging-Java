@@ -17,6 +17,7 @@ import java.io.PrintStream;
  *   java -jar Sender/target/Sender.jar poison           a SKU that is not in the catalogue (queue-side failure)
  *   java -jar Sender/target/Sender.jar unmappable       a body that is not a PlaceOrder (queue-side failure)
  *   java -jar Sender/target/Sender.jar flaky            a lookup that fails twice then works
+ *   java -jar Sender/target/Sender.jar slow             an order whose lookup takes 30 seconds
  *   java -jar Sender/target/Sender.jar bad-event        A RECORD THE STREAM CONSUMER CANNOT READ -- straight onto Kafka
  * </pre>
  */
